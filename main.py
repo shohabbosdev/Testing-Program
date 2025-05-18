@@ -1,7 +1,7 @@
 import streamlit as st
 from tool import *
 
-st.set_page_config("Testlash tizimi| TestingUI", "❇️", "wide",'expanded')
+st.set_page_config("Testlash tizimi|TestingUI", "❇️", "wide",'expanded')
 # Yordamchi funksiyalar
 def initialize_session_state():
     """Sessiya holatini boshlash va standart qiymatlarni o‘rnatish."""
