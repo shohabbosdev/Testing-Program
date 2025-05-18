@@ -280,7 +280,7 @@ def fayl_yuklash():
                 "Har bir savol uchun vaqt (soniya)", min_value=10, value=30
             )
         
-        if st.sidebar.button("Testni boshlash"):
+        if st.sidebar.button("Testni boshlash", use_container_width=True):
             st.session_state.vaqt_boshlandi = time.time()
             st.session_state.current_test = 0
             st.session_state.javoblar = []
@@ -338,8 +338,8 @@ def test_ishlash():
     
     test_index = st.session_state.tasodifiy_indekslar[st.session_state.current_test]
     test = st.session_state.testlar.iloc[test_index]
-    st.write(f"Savol {st.session_state.current_test + 1}/{st.session_state.test_soni}")
-    st.write(test['savol'])
+    st.markdown(f"### :rainbow[Savol {st.session_state.current_test + 1}/{st.session_state.test_soni}]")
+    st.markdown(f"##### :blue[{test['savol']}]")
     
     # Ogohlantirish xabari
     if st.session_state.current_test == 0 and not st.session_state.ogohlantirish_korsatildi:
@@ -349,7 +349,7 @@ def test_ishlash():
     # Vaqtni ko‘rsatish
     vaqt_limit = test.get('taxminiy_vaqt', st.session_state.savol_vaqt_turi)
     qolgan_vaqt = calculate_time_remaining(st.session_state.savol_vaqti, vaqt_limit)
-    st.write(f"Savol uchun qolgan vaqt: {qolgan_vaqt} soniya")
+    st.markdown(f"Savol uchun qolgan vaqt: :green[{qolgan_vaqt}] soniya")
     
     if qolgan_vaqt <= 0:
         st.warning("Savol uchun vaqt tugadi! Keyingi savolga o‘tmoqdasiz.")
@@ -389,7 +389,7 @@ def test_ishlash():
     col1, col2 = st.columns(2)
     with col1:
         button_label = "Testni tugatish" if st.session_state.current_test == st.session_state.test_soni - 1 else "Keyingi savol"
-        if st.button(button_label, key="next_button"):
+        if st.button(button_label, key="next_button", use_container_width=True):
             ball_kamayishi = (st.session_state.javob_ozgarish_soni[st.session_state.current_test] - 2) * 0.5 if st.session_state.javob_ozgarish_soni[st.session_state.current_test] > 2 else 0
             st.session_state.javoblar.append({
                 'savol': test['savol'],
@@ -506,7 +506,7 @@ def tahlil_ko_rsatis():
                 key="export_pdf_button"
             )
     
-    if st.button("Testni yangidan boshlash"):
+    if st.button("Testni yangidan boshlash", use_container_width=True):
         st.session_state.clear()
         st.session_state.menu = "Fayl yuklash"
         st.rerun()
