@@ -404,60 +404,66 @@ def test_ishlash():
             st.rerun()
 
 # Tahlil jarayoni
+
 def tahlil_ko_rsatis():
-    st.header("Test natijalari")
-    if not st.session_state.javoblar:
-        st.warning("Hozircha natijalar yo‘q. Testni yakunlang!")
-        return
-    
-    if st.session_state.vaqt_boshlandi is None:
-        st.error("Test vaqti boshlanmagan. Iltimos, testni qaytadan boshlang.")
-        return
-    
-    to_g_ri_javoblar = 0
-    xato_ozgarish_savollar = 0
-    umumiy_ball = 0
-    
-    for javob in st.session_state.javoblar:
-        if javob['ozgarish_soni'] > 2:
-            xato_ozgarish_savollar += 1
-            umumiy_ball -= javob['ball_kamayishi']
-        elif javob['tanlangan_javob'] == javob['to\'g\'ri_javob']:
-            to_g_ri_javoblar += 1
-            umumiy_ball += 1
-    
-    st.write(f"To‘g‘ri javoblar: {to_g_ri_javoblar}/{len(st.session_state.javoblar)}")
-    st.write(f"Muvaffaqiyat foizi: {(to_g_ri_javoblar/len(st.session_state.javoblar))*100:.2f}%")
-    st.write(f"Javob 3 martadan ko‘p o‘zgartirilgan savollar: {xato_ozgarish_savollar}")
-    st.write(f"Umumiy ball: {umumiy_ball:.2f}")
-    
-    umumiy_vaqt = calculate_time_remaining(st.session_state.vaqt_boshlandi)
-    st.write(f"Test uchun sarflangan vaqt: {umumiy_vaqt}")
+    col1, col2 = st.columns(2)
+    with col1:
+        st.markdown("### :rainbow[Test natijalari]")
+        if not st.session_state.javoblar:
+            st.warning("Hozircha natijalar yo‘q. Testni yakunlang!")
+            return
+        
+        if st.session_state.vaqt_boshlandi is None:
+            st.error("Test vaqti boshlanmagan. Iltimos, testni qaytadan boshlang.")
+            return
+        
+        to_g_ri_javoblar = 0
+        xato_ozgarish_savollar = 0
+        umumiy_ball = 0
+        
+        for javob in st.session_state.javoblar:
+            if javob['ozgarish_soni'] > 2:
+                xato_ozgarish_savollar += 1
+                umumiy_ball -= javob['ball_kamayishi']
+            elif javob['tanlangan_javob'] == javob['to\'g\'ri_javob']:
+                to_g_ri_javoblar += 1
+                umumiy_ball += 1
+        
+        st.markdown(f"To‘g‘ri javoblar: ♻️ :blue[{to_g_ri_javoblar}/{len(st.session_state.javoblar)}]")
+        st.markdown(f"Muvaffaqiyat foizi: 🔋 :blue[{(to_g_ri_javoblar/len(st.session_state.javoblar))*100:.2f}%]")
+        st.markdown(f"Javob 3 martadan ko‘p o‘zgarishga ega savollar: 🔨 :blue[{xato_ozgarish_savollar}] ta")
+        st.markdown(f"Umumiy ball: 👜 :blue[{umumiy_ball:.2f}]")
+        
+        umumiy_vaqt = calculate_time_remaining(st.session_state.vaqt_boshlandi)
+        st.markdown(f"Test uchun sarflangan vaqt: ⏰ :blue[{umumiy_vaqt}]")
     
     # Noto‘g‘ri javoblar bo‘yicha mavzular
-    noto_g_ri_mavzular = {}
-    for javob in st.session_state.javoblar:
-        if javob['ozgarish_soni'] > 2 or javob['tanlangan_javob'] != javob['to\'g\'ri_javob']:
-            mavzu = javob['mavzu']
-            noto_g_ri_mavzular[mavzu] = noto_g_ri_mavzular.get(mavzu, 0) + 1
-    
-    st.subheader("Qayta o‘rganish kerak bo‘lgan mavzular:")
-    if noto_g_ri_mavzular:
-        for mavzu, son in noto_g_ri_mavzular.items():
-            st.write(f"{mavzu}: {son} ta noto‘g‘ri javob")
-    else:
-        st.write("Barcha javoblar to‘g‘ri! 🎉")
+    with col2:
+        noto_g_ri_mavzular = {}
+        for javob in st.session_state.javoblar:
+            if javob['ozgarish_soni'] > 2 or javob['tanlangan_javob'] != javob['to\'g\'ri_javob']:
+                mavzu = javob['mavzu']
+                noto_g_ri_mavzular[mavzu] = noto_g_ri_mavzular.get(mavzu, 0) + 1
+        
+        st.markdown("### :rainbow[Qayta o‘rganish kerak bo‘lgan mavzular]:")
+        if noto_g_ri_mavzular:
+            for mavzu, son in noto_g_ri_mavzular.items():
+                st.markdown(f":green[{mavzu}]: :red[{son}] ta noto‘g‘ri javob")
+        else:
+            st.markdown(":blue[Barcha javoblar to‘g‘ri! 🎉]")
     
     # Vizualizatsiya
-    fig1 = px.pie(names=['To‘g‘ri', 'Noto‘g‘ri', 'Ko‘p o‘zgartirilgan'], 
-                  values=[to_g_ri_javoblar, len(st.session_state.javoblar) - to_g_ri_javoblar - xato_ozgarish_savollar, xato_ozgarish_savollar],
-                  title="Javoblar taqsimoti")
-    st.plotly_chart(fig1)
-    
-    if noto_g_ri_mavzular:
-        fig2 = px.bar(x=list(noto_g_ri_mavzular.keys()), y=list(noto_g_ri_mavzular.values()), 
-                      labels={'x': 'Mavzular', 'y': "Noto‘g‘ri javoblar soni"}, title="Mavzular bo‘yicha noto‘g‘ri javoblar")
-        st.plotly_chart(fig2)
+    tab1,tab2 = st.tabs(["Doiraviy diagramma", "Usutnli diagramma"])
+    with tab1:
+        fig1 = px.pie(names=['To‘g‘ri', 'Noto‘g‘ri', 'Ko‘p o‘zgartirilgan'], 
+                    values=[to_g_ri_javoblar, len(st.session_state.javoblar) - to_g_ri_javoblar - xato_ozgarish_savollar, xato_ozgarish_savollar],
+                    title="Javoblar taqsimoti")
+        st.plotly_chart(fig1)
+    with tab2:
+        if noto_g_ri_mavzular:
+            fig2 = px.bar(x=list(noto_g_ri_mavzular.keys()), y=list(noto_g_ri_mavzular.values()), 
+                        labels={'x': 'Mavzular', 'y': "Noto‘g‘ri javoblar soni"}, title="Mavzular bo‘yicha noto‘g‘ri javoblar")
+            st.plotly_chart(fig2)
     
     ustun1,ustun2 = st.columns(2)
     # Natijalarni eksport qilish (CSV)
