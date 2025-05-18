@@ -240,7 +240,7 @@ st.markdown("""
 
 # Birinchi oyna: CSV faylni yuklash
 def fayl_yuklash():
-    st.header("Test faylini yuklash")
+    st.markdown("### :blue[Test faylini yuklash]")
     st.markdown("**Qo‘llanma**: CSV faylni yuklang (ustunlar: savol, to'g'ri_javob, noto'g'ri_javob_1, noto'g'ri_javob_2, noto'g'ri_javob_3, mavzu, taxminiy_vaqt). Testlar sonini va vaqtni tanlang.")
     
     with st.form("fayl_yuklash_formasi"):
@@ -328,7 +328,7 @@ def test_ishlash():
         return
 
     # Savol tanlash
-    savol_tanlash = st.selectbox("Savol tanlang", [f"Savol {i+1}" for i in range(st.session_state.test_soni)], 
+    savol_tanlash = st.sidebar.selectbox("Savolni tanlang...", [f"Savol {i+1}" for i in range(st.session_state.test_soni)], 
                                  index=st.session_state.current_test)
     new_index = int(savol_tanlash.split()[-1]) - 1
     if new_index != st.session_state.current_test:
