@@ -8,7 +8,42 @@ import pandas as pd
 import time
 import random
 import plotly.express as px
+import sqlite3
 
+def init_db():
+    conn = sqlite3.connect("test_results.db")
+    c = conn.cursor()
+    c.execute("""CREATE TABLE IF NOT EXISTS results (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id TEXT,
+                test_date TEXT,
+                to_g_ri_javoblar INTEGER,
+                umumiy_ball REAL,
+                umumiy_vaqt TEXT,
+                noto_g_ri_mavzular TEXT
+            )""")
+    conn.commit()
+    conn.close()
+
+def save_results(user_id, to_g_ri_javoblar, umumiy_ball, umumiy_vaqt, noto_g_ri_mavzular):
+    init_db()
+    conn = sqlite3.connect("test_results.db")
+    c = conn.cursor()
+    test_date = time.strftime("%Y-%m-%d %H:%M:%S")
+    noto_g_ri_mavzular_str = str(noto_g_ri_mavzular)
+    c.execute("INSERT INTO results (user_id, test_date, to_g_ri_javoblar, umumiy_ball, umumiy_vaqt, noto_g_ri_mavzular) VALUES (?, ?, ?, ?, ?, ?)",
+              (user_id, test_date, to_g_ri_javoblar, umumiy_ball, umumiy_vaqt, noto_g_ri_mavzular_str))
+    conn.commit()
+    conn.close()
+
+def get_user_results(user_id):
+    init_db()
+    conn = sqlite3.connect("test_results.db")
+    c = conn.cursor()
+    c.execute("SELECT * FROM results WHERE user_id = ?", (user_id,))
+    results = c.fetchall()
+    conn.close()
+    return results
 
 
 def export_results_to_pdf(javoblar, to_g_ri_javoblar, xato_ozgarish_savollar, umumiy_ball, umumiy_vaqt, noto_g_ri_mavzular):
@@ -331,11 +366,13 @@ def test_ishlash():
     
     test_index = st.session_state.tasodifiy_indekslar[st.session_state.current_test]
     test = st.session_state.testlar.iloc[test_index]
-    st.markdown(f"### :rainbow[Savol {st.session_state.current_test + 1}/{st.session_state.test_soni}]")
-    st.markdown(f"##### :blue[{test['savol']}]")
+    with st.container():
+        st.markdown(f"### :rainbow[Savol {st.session_state.current_test + 1}/{st.session_state.test_soni}]")
+        st.markdown(f"##### :blue[{test['savol']}]")
     
     if st.session_state.current_test == 0 and not st.session_state.ogohlantirish_korsatildi:
-        st.warning("Diqqat! Javobni 2 martadan ko‘p o‘zgartirish tavsiya etilmaydi.")
+        st.markdown('<div class="custom-warning">⚠️ Diqqat! Javobni 2 martadan ko‘p o‘zgartirish tavsiya etilmaydi.</div>', unsafe_allow_html=True)
+        st.balloons()
         st.session_state.ogohlantirish_korsatildi = True
     
     vaqt_limit = test.get('taxminiy_vaqt', st.session_state.savol_vaqt_turi)
@@ -404,6 +441,7 @@ def tahlil_ko_rsatis():
             st.error("Test vaqti boshlanmagan. Iltimos, testni qaytadan boshlang.")
             return
         
+        user_id = st.text_input("Foydalanuvchi ID kiriting (masalan, talaba1):", "talaba1")
         to_g_ri_javoblar, xato_ozgarish_savollar, umumiy_ball, noto_g_ri_mavzular = calculate_results(st.session_state.javoblar)
         
         st.markdown(f"To‘g‘ri javoblar: ♻️ :blue[{to_g_ri_javoblar}/{len(st.session_state.javoblar)}]")
@@ -413,7 +451,17 @@ def tahlil_ko_rsatis():
         
         umumiy_vaqt = calculate_time_remaining(st.session_state.vaqt_boshlandi)
         st.markdown(f"Test uchun sarflangan vaqt: ⏰ :blue[{umumiy_vaqt}]")
-    
+        save_results(user_id, to_g_ri_javoblar, umumiy_ball, umumiy_vaqt, noto_g_ri_mavzular)
+        st.success(f"Natijalar {user_id} uchun saqlandi!")
+        # Oldingi natijalarni ko‘rish
+        if st.button("Oldingi natijalarni ko‘rish"):
+            results = get_user_results(user_id)
+            if results:
+                for result in results:
+                    st.write(f"Test sanasi: {result[2]}, To‘g‘ri javoblar: {result[3]}, Umumiy ball: {result[4]}, Vaqt: {result[5]}")
+            else:
+                st.info("Hozircha natijalar yo‘q.")
+        
     with col2:
         st.markdown("### :rainbow[Qayta o‘rganish kerak bo‘lgan mavzular]:")
         if noto_g_ri_mavzular:

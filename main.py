@@ -29,14 +29,75 @@ def initialize_session_state():
 
 st.markdown("""
     <style>
-    .stButton>button {background-color: #4CAF50; color: white; border-radius: 5px; padding: 10px;}
-    .stRadio>label {font-size: 16px; margin-top: 10px;}
-    .stNumberInput>label {font-weight: bold;}
-    .stSelectbox>label {font-weight: bold;}
-    .stFileUploader>label {font-weight: bold;}
-    .stWarning {background-color: #FFF3CD; padding: 10px; border-radius: 5px;}
-    .time-up-modal {background-color: #FFDDC1; padding: 20px; border-radius: 10px; text-align: center; font-size: 18px; font-weight: bold;}
-    </style>
+    .stApp {
+        background: linear-gradient(to right, #3b3951, #3b3950);
+    }
+    .stButton>button {
+        background-color: #0288d1;
+        color: white;
+        border-radius: 5px;
+        padding: 10px;
+        width: 100%;
+        font-size: 16px;
+    }
+    .stRadio>label {
+        font-size: 16px;
+        margin-top: 10px;
+        color: #01579b;
+    }
+.stButton>button {
+    background-color: #4CAF50;
+    color: white;
+    border-radius: 5px;
+    padding: 10px;
+    width: 100%;
+    font-size: 16px;
+}
+.stRadio>label {
+    font-size: 16px;
+    margin-top: 10px;
+}
+.stNumberInput>label, .stSelectbox>label, .stFileUploader>label {
+    font-weight: bold;
+}
+.stWarning {
+    background-color: #FFF3CD;
+    padding: 10px;
+    border-radius: 5px;
+}
+.time-up-modal {
+    background-color: #FFDDC1;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+}
+@media (max-width: 600px) {
+    .stButton>button {
+        font-size: 14px;
+        padding: 8px;
+    }
+    .stRadio>label {
+        font-size: 14px;
+    }
+    .time-up-modal {
+        font-size: 16px;
+        padding: 15px;
+    }
+    .stMarkdown h3, .stMarkdown h5 {
+        font-size: 18px !important;
+    }
+}
+.custom-warning {
+    background-color: #FFECB3;
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 5px solid #FFA000;
+    font-size: 16px;
+    color: #B71C1C;
+}
+</style>
 """, unsafe_allow_html=True)
 
 st.markdown("# ⌛️ :red[Test tahlil tizimi]")
